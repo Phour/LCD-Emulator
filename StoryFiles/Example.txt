@@ -1,0 +1,24 @@
+[T]"Example             "
+[T]"here you have 4 rows"
+[T]"to print the Title  "
+[T]"Screen for the Story"
+
+[H]{tutorial}
+[R]"In einer Row koennen"
+[R]"bis zu 20 Zeichen   "
+[R]"stehen.             "
+[R]"Das ist das Maximum!"
+[I]"Zeilen mit [I] können beliebig lang sein und werden ignoriert"
+[L]
+[R]"[L] Loescht Alles   "
+[R]"[yn]fragt nach Ja   "
+[R]"oder nein           "
+[R]"Verstanden?         "
+[yn]{y:tutorial;n:weiter}
+
+[H]{Weiter}
+[E]"[H] ist wie eine    "
+[E]"Textmarke und kann  "
+[E]"beliebig land sein. "
+[R]"mit [E] wird Beendet"
+[E]"End of transmission."
