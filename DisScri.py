@@ -16,6 +16,8 @@ print(T.ctime())
 response = input("Do you want to use Emulator only? y/n")
 EmuOnly = 0
 
+#testcomment
+
 print("--- --- --- --- --- --- ---")
 print("Type Game() to start a Game")
 print("--- --- --- --- --- --- ---")
