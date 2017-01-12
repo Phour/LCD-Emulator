@@ -316,9 +316,23 @@ def StartStory(filename, ImageTable, windowSurface, StoryIndex, StoryContent):
 		
 #def ScrollUp():
 
+def cycletime(ctime, maxfps):
+	# 1s = 1000ms = 1000µs
+	# µs per frame
+	limit = 1 / maxfps * 1000 #min limit in ms
+	current = T.time() - ctime
+	wait = limit - current *1000
+	#print('Limit: ' + str(limit)[:8] + 'ms | Current: ' + str(current * 1000)[:8] + 'ms | Wainting- ' + str(wait)[:8] +'ms')
+	T.sleep(wait/1000)
+	
+	
+
 # ----- ----- ----- GAME ----- ----- ----- #
 def Game():
 	pygame.init()
+	
+	#limits to 60 cycles per second
+	fpslimit = 60
 	
 	GameType = 'MainMenu'
 	
@@ -363,7 +377,6 @@ def Game():
 
 	#render MainMenu screen
 	render(MMScreen, ImageTable, windowSurface)
-	
 	#Gameloop (Mainly Key-Bindings)
 	while True:
 		event = pygame.event.poll()
@@ -420,5 +433,9 @@ def Game():
 		if (event.type == pygame.KEYDOWN) and (event.key == pygame.K_i):
 			if EmuOnly == 0:
 				GPcom.initiate()
-
+				
+		#FrameLimiter
+		ctime = T.time()
+		ctime = cycletime(ctime, fpslimit)
+		
 Game()
