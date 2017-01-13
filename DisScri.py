@@ -304,17 +304,57 @@ for x in range(0, 4):
 	for y in range(0, 20):
 		StoryScreen['R'+str(x+1)]['Z'+str(y+1)] = ' '
 
-def StartStory(filename, ImageTable, windowSurface, StoryIndex, StoryContent):
+def LoadStoryContent(filename):
 	with open(filename) as f:
 		StoryContent = f.readlines()
+		return StoryContent
+
+def StartStory(ImageTable, windowSurface, StoryContent):
+	Index = 0
 	for c in StoryContent:
 		print(c)
 	for i in range(0, 4):
-		AlterRow(StoryScreen, StoryIndex+1, StoryContent[StoryIndex][4:])
-		StoryIndex += 1
+		AlterRow(StoryScreen, Index+1, StoryContent[Index][4:])
+		Index += 1
 	render(StoryScreen, ImageTable, windowSurface)
+	return [4, 4]
 		
-#def ScrollUp():
+def ScrollUp(StoryIndex):
+	if StoryIndex[1] == 5:
+		StoryScreen['R1'] = StoryScreen['R2']
+		StoryScreen['R2'] = StoryScreen['R3']
+		StoryScreen['R3'] = StoryScreen['R4']
+		StoryIndex[1] = 4
+	else:
+		pass
+	return StoryIndex
+
+def ClearRows():
+	for x in range(0, 4):
+		StoryScreen['R'+str(x+1)] = {}
+		for y in range(0, 20):
+			StoryScreen['R'+str(x+1)]['Z'+str(y+1)] = ' '
+
+#reading the next line and deciding what to do
+def NextLine(ImageTable, windowSurface, StoryIndex, StoryContent):	
+	a = StoryContent[StoryIndex[0]].index('[') + 1
+	b = StoryContent[StoryIndex[0]].index(']')
+	case = StoryContent[StoryIndex[0]][a:b]
+	print(case)
+	if case == 'L':
+		ClearRows()
+		StoryIndex[1] = 1
+	elif case == 'R':
+		StoryIndex = ScrollUp(StoryIndex)
+		Line = str(StoryContent[StoryIndex[0]][b+2:-2])
+		print ( "Line: " + Line)
+		AlterRow(StoryScreen, StoryIndex[1], Line)
+		StoryIndex[1] += 1
+	else:
+		pass	
+	render(StoryScreen, ImageTable, windowSurface)
+	StoryIndex[0] += 1
+	return StoryIndex
 
 def cycletime(ctime, maxfps):
 	# 1s = 1000ms = 1000µs
@@ -344,8 +384,8 @@ def Game():
 	windowSurface.fill(BLACK)
 	
 	#List for StoryContent and Index
-	StoryIndex = 0
-	StoryContent = []
+	#StoryIndex = 0
+	#StoryContent = []
 	
 	#Set LCD Emulator Folder
 	EmuFolder = Workfolder + 'LCD_Emulator/'
@@ -386,7 +426,9 @@ def Game():
 				Start(ImageTable, windowSurface)
 			if (event.type == pygame.KEYDOWN) and (event.key == pygame.K_2):
 				GameType = 'TexVenture'
-				StartStory(Workfolder + 'StoryFiles/Example.txt', ImageTable, windowSurface, StoryIndex, StoryContent)
+				StoryContent = LoadStoryContent('./StoryFiles/Example.txt')
+				StoryIndex = StartStory(ImageTable, windowSurface, StoryContent)
+				
 			if (event.type == pygame.KEYDOWN) and (event.key == pygame.K_ESCAPE):
 				if EmuOnly == 0:
 					GPcom.ClearDisp()
@@ -422,7 +464,12 @@ def Game():
 		elif GameType =='TexVenture':
 			#Next line with RETURN
 			if (event.type == pygame.KEYDOWN) and (event.key == pygame.K_RETURN):
-				NextLine()
+				StoryIndex = NextLine(ImageTable, windowSurface, StoryIndex, StoryContent)
+				
+			#ESC to Exit TexVenture
+			if (event.type == pygame.KEYDOWN) and (event.key == pygame.K_ESCAPE):
+				GameType = 'MainMenu'
+				render(MMScreen, ImageTable, windowSurface)
 		
 		#clear screen
 		if (event.type == pygame.KEYDOWN) and (event.key == pygame.K_c):
