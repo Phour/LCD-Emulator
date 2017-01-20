@@ -1,9 +1,6 @@
 # Testsript display
 # to run: exec(open("/home/pi/Desktop/DisplayScript/DisScri.py").read())
 
-### IMPORTANT -> SET WORKFOLDER HERE ###
-Workfolder = "/home/pi/Desktop/DisplayScript/"
-
 import time as T
 
 import pygame, sys
@@ -348,7 +345,8 @@ def Game():
 	StoryContent = []
 	
 	#Set LCD Emulator Folder
-	EmuFolder = Workfolder + 'LCD_Emulator/'
+	# EmuFolder = Workfolder + 'LCD_Emulator/'
+	EmuFolder = 'LCD_Emulator/'
 	
 	#Loading Background to ImageTable
 	ImageTable = {'BackGround':pygame.image.load(EmuFolder + 'LCD_Images/LCD_Emu.png')}
@@ -386,7 +384,7 @@ def Game():
 				Start(ImageTable, windowSurface)
 			if (event.type == pygame.KEYDOWN) and (event.key == pygame.K_2):
 				GameType = 'TexVenture'
-				StartStory(Workfolder + 'StoryFiles/Example.txt', ImageTable, windowSurface, StoryIndex, StoryContent)
+				StartStory('StoryFiles/Example.txt', ImageTable, windowSurface, StoryIndex, StoryContent)
 			if (event.type == pygame.KEYDOWN) and (event.key == pygame.K_ESCAPE):
 				if EmuOnly == 0:
 					GPcom.ClearDisp()
