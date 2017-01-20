@@ -97,4 +97,7 @@ Table['²'] = "01111110" # arrow pointing right
 Table['³'] = "01111111" # arrow pointing left
 Table['°'] = "11011011" # position
 Table['~'] = "11111111" # FULL
+Table['ö'] = "11101111"
+Table['ü'] = "11110101"
+Table['ä'] = "11100001"
 ##### sign table end #####
