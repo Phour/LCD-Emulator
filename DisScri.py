@@ -403,10 +403,8 @@ def NextLine(ImageTable, windowSurface, StoryIndex, StoryContent):
 		#['type', ChoiceYes, ChoiceNo, choosen]
 		StoryIndex = ['yn',0,0,0]
 		
-		#prepare line counter
 		x = 0
-		
-		#search through Content for textmarks and identify matching
+		#search through Content for textmarks and identify matching to yes
 		for L in StoryContent:
 			Type = L[L.index('['):L.index(']')+1]
 			if Type == '[M]':
@@ -417,7 +415,17 @@ def NextLine(ImageTable, windowSurface, StoryIndex, StoryContent):
 					print('found YES')
 					StoryIndex[1] = x
 					StoryIndex[3] = x
-				elif MarkName == no:
+			x += 1
+			
+		x = 0
+		#search through Content for textmarks and identify matching to no
+		for L in StoryContent:
+			Type = L[L.index('['):L.index(']')+1]
+			if Type == '[M]':
+				print (L)
+				MarkName = L[L.index('{')+1:L.index('}')]
+				print ('found ' + MarkName + ' in line ' + str(x+1))
+				if MarkName == no:
 					print('found NO')
 					StoryIndex[2] = x
 			x += 1
