@@ -1,0 +1,87 @@
+[T]"~~~~~~~~~~~~~~~~~~~~"
+[T]"~~~~~~~~~TERRAFORMER"
+[T]"~~~~~~~~~~~~~~~~~~~~"
+[T]"~~~~~~~~~~~~~~~~~~~~"
+[L]
+[M]{Intro}
+[R]"Connecting...~~~~~~~"
+[R]"...~~~~~~~~~~~~~~~~~"
+[R]"...~~~~~~~~~~~~~~~~~"
+[R]"~~~~~~~~DONE~~~~~~~~"
+[R]"--------------------"
+[R]"Receiving call      "
+[R]"...                 "
+[R]"Answer call?        "
+[R]"                    "
+[yn]{y:WEITER_1;n:END_1}" Yes~~~~~~~~~~~~~No "
+[I]
+[M]{END_1}
+[L]
+[R]"...    Declined Call"
+[R]"... logging OFF     "
+[R]"~~~~~~~~~~~~~~~~~~~~"
+[R]"~~~~~~~~~~~~~~~~~~~~"
+[R]"~~~~~~~~~~~~~~~~~~~~"
+[R]"~~~~~~~~~~~~~BAD END"
+[E]
+[M]{WEITER_1}
+[L]
+[R]"Hallo?              "
+[R]"Mist funktioniert   "
+[R]"das ding überhaupt? "
+[R]"Kann mich wer Hören?"
+[R]"                    "
+[yn]{y:WEITER_2;n:WEITER_2}" Laut und klar~~Nö "
+[M]{WEITER_2}
+[R]"Scheisse...         "
+[R]"Ich hör schon wieder"
+[R]"nichts. blödes Teil!"
+[R]"~~*Lautes geräusch*~"
+[R]"Hallo ist da wer?   "
+[R]"                    "
+[yn]{y:WEITER_3;n:END_2}" Ja!Hallo~Auflegen "
+[I]
+[M]{END_2}
+[L]
+[R]"...    Hanging up   "
+[R]"... logging OFF     "
+[R]"~~~~~~~~~~~~~~~~~~~~"
+[R]"~~~~~~~~~~~~~~~~~~~~"
+[R]"~~~~~~~~~~~~~~~~~~~~"
+[R]"~~~~~~~~~~~~~BAD END"
+[E]
+[M]{WEITER_3}
+[R]"Aaah Endlich...     "
+[R]"Ich versuche seit   "
+[R]"Stunden jemanden zu "
+[R]"Erreichen!!         "
+[R]"Ich verstecke mich  "
+[R]"seit Stunden in ein-"
+[R]"em Raumhafen der    "
+[R]"Federation und habe "
+[R]"Angst enddeckt zu   "
+[R]"Werden.             "
+[R]"                    "
+[yn]{y:WEITER_4;n:Federation}" Mist!!~Federation? "
+[I]
+[M]{Federation}
+[R]"Was? Du kennst die  "
+[R]"Federation nicht?   "
+[R]"Das kann ich dir    "
+[R]"jetzt nich erklären!"
+[R]"Aber kurz gesagt:   "
+[R]"Das sind die Bösen!!"
+[R]"Reicht dir das um   "
+[R]"mir zu helfen?      "
+[R]"                    "
+[yn]{y:WEITER_5;n:WEITER_5}" Klar!~~~~~~Na gut. "
+[I]
+[M]{WEITER_4}
+[R]"Du sagst es.        "
+[R]"Wirst du mir Helfen?"
+[R]"                    "
+[yn]{y:WEITER_5;n:END_2}" Klar!~Dein Problem "
+[I]
+[M]{WEITER_5}
+[R]"Danke"
+[E]

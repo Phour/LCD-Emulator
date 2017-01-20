@@ -118,6 +118,9 @@ def Start(ImageTable, windowSurface):
 	
 	Cursor = [1,1, '°']
 	render(Screen, ImageTable, windowSurface)
+
+def AlterSign(screen, row, pos, sign):
+	screen['R'+str(row)]['Z'+str(pos)] = sign
 			
 def AlterRow(screen, row, content):
 	z = 1
@@ -301,17 +304,151 @@ for x in range(0, 4):
 	for y in range(0, 20):
 		StoryScreen['R'+str(x+1)]['Z'+str(y+1)] = ' '
 
-def StartStory(filename, ImageTable, windowSurface, StoryIndex, StoryContent):
+def LoadStoryContent(filename):
 	with open(filename) as f:
 		StoryContent = f.readlines()
+		return StoryContent
+
+def StartStory(ImageTable, windowSurface, StoryContent):
+	Index = 0
 	for c in StoryContent:
 		print(c)
 	for i in range(0, 4):
-		AlterRow(StoryScreen, StoryIndex+1, StoryContent[StoryIndex][4:])
-		StoryIndex += 1
+		AlterRow(StoryScreen, Index+1, StoryContent[Index][4:])
+		Index += 1
 	render(StoryScreen, ImageTable, windowSurface)
+	return [4, 4]
 		
-#def ScrollUp():
+def ScrollUp(StoryIndex):
+	if StoryIndex[1] == 5:
+		print("scrolling up")
+		CopyRow(StoryScreen, "R2", "R1")
+		CopyRow(StoryScreen, "R3", "R2")
+		CopyRow(StoryScreen, "R4", "R3")
+		StoryIndex[1] = 4
+	else:
+		pass
+	return StoryIndex
+
+def CopyRow(Screen, SourceRow, TargetRow):
+	Screen[TargetRow] = {}
+	Screen[TargetRow].update(Screen[SourceRow])
+	
+
+def ClearRows():
+	for x in range(0, 4):
+		StoryScreen['R'+str(x+1)] = {}
+		for y in range(0, 20):
+			StoryScreen['R'+str(x+1)]['Z'+str(y+1)] = ' '
+
+def GetCase(StoryIndex, StoryContent):
+	a = StoryContent[StoryIndex[0]].index('[') + 1
+	b = StoryContent[StoryIndex[0]].index(']')
+	Case = StoryContent[StoryIndex[0]][a:b]
+	return Case
+
+
+def GetLine(StoryIndex, StoryContent):
+	b = StoryContent[StoryIndex[0]].index(']')
+	Line = str(StoryContent[StoryIndex[0]][b+2:-2])
+	return Line
+
+#reading the next line and deciding what to do
+def NextLine(ImageTable, windowSurface, StoryIndex, StoryContent):	
+	Case = GetCase(StoryIndex, StoryContent)
+	print(Case)
+	while Case == "I":
+		StoryIndex[0] += 1
+		Case = GetCase(StoryIndex, StoryContent)
+		print(Case)
+	
+	while Case == 'M':
+		StoryIndex[0] += 1
+		Case = GetCase(StoryIndex, StoryContent)
+		print(Case)
+	
+	#Clear screen case
+	if Case == 'L':
+		ClearRows()
+		StoryIndex[1] = 1
+	
+	#Read line case
+	elif Case == 'R':
+		StoryIndex = ScrollUp(StoryIndex)
+		Line = GetLine(StoryIndex, StoryContent)
+		print ( "Line: " + Line)
+		AlterRow(StoryScreen, StoryIndex[1], Line)
+		StoryIndex[1] += 1
+	
+	elif Case == "yn":
+		Line = GetLine(StoryIndex, StoryContent)
+		print(Line)
+		StoryIndex = ScrollUp(StoryIndex)
+		c = Line.index(';')
+		
+		#read textmark-links
+		yes = Line[2:c]
+		print('YES == ' + yes)
+		no = Line[c+3:Line.index('}')]
+		print('NO == ' + no)
+		
+		#prepare vars to remember lines
+		MarkYes = 0
+		MarkNo = 0
+		
+		# morph StoryIndex to a list to save some information to jump to the right place in the storyline
+		#['type', ChoiceYes, ChoiceNo, choosen]
+		StoryIndex = ['yn',0,0,0]
+		
+		x = 0
+		#search through Content for textmarks and identify matching to yes
+		for L in StoryContent:
+			Type = L[L.index('['):L.index(']')+1]
+			if Type == '[M]':
+				print (L)
+				MarkName = L[L.index('{')+1:L.index('}')]
+				print ('found ' + MarkName + ' in line ' + str(x+1))
+				if MarkName == yes:
+					print('found YES')
+					StoryIndex[1] = x
+					StoryIndex[3] = x
+			x += 1
+			
+		x = 0
+		#search through Content for textmarks and identify matching to no
+		for L in StoryContent:
+			Type = L[L.index('['):L.index(']')+1]
+			if Type == '[M]':
+				print (L)
+				MarkName = L[L.index('{')+1:L.index('}')]
+				print ('found ' + MarkName + ' in line ' + str(x+1))
+				if MarkName == no:
+					print('found NO')
+					StoryIndex[2] = x
+			x += 1
+		
+		global GameType
+		GameType = 'TVClosedQuestion'
+		#printing answers
+		Answersline = Line[Line.index('}')+2:]
+		print(Answersline)
+		AlterRow(StoryScreen, 4, Answersline)
+		
+		#creating left Arrow
+		AlterSign(StoryScreen, 4, 1, '²')
+		
+		render(StoryScreen, ImageTable, windowSurface)
+		return StoryIndex
+	
+	#End of story case
+	elif Case == 'E':
+		StoryIndex = 'END'
+		return StoryIndex
+	else:
+		pass	
+	render(StoryScreen, ImageTable, windowSurface)
+	StoryIndex[0] += 1
+	return StoryIndex
 
 def cycletime(ctime, maxfps):
 	# 1s = 1000ms = 1000µs
@@ -322,7 +459,7 @@ def cycletime(ctime, maxfps):
 	#print('Limit: ' + str(limit)[:8] + 'ms | Current: ' + str(current * 1000)[:8] + 'ms | Wainting- ' + str(wait)[:8] +'ms')
 	T.sleep(wait/1000)
 	
-	
+GameType = ''	
 
 # ----- ----- ----- GAME ----- ----- ----- #
 def Game():
@@ -331,6 +468,7 @@ def Game():
 	#limits to 60 cycles per second
 	fpslimit = 60
 	
+	global GameType
 	GameType = 'MainMenu'
 	
 	#Creating Game/ProgrammWindow
@@ -341,8 +479,8 @@ def Game():
 	windowSurface.fill(BLACK)
 	
 	#List for StoryContent and Index
-	StoryIndex = 0
-	StoryContent = []
+	#StoryIndex = 0
+	#StoryContent = []
 	
 	#Set LCD Emulator Folder
 	# EmuFolder = Workfolder + 'LCD_Emulator/'
@@ -384,7 +522,8 @@ def Game():
 				Start(ImageTable, windowSurface)
 			if (event.type == pygame.KEYDOWN) and (event.key == pygame.K_2):
 				GameType = 'TexVenture'
-				StartStory('StoryFiles/Example.txt', ImageTable, windowSurface, StoryIndex, StoryContent)
+				StoryContent = LoadStoryContent('./StoryFiles/Terraforming.txt')
+				StoryIndex = StartStory(ImageTable, windowSurface, StoryContent)
 			if (event.type == pygame.KEYDOWN) and (event.key == pygame.K_ESCAPE):
 				if EmuOnly == 0:
 					GPcom.ClearDisp()
@@ -420,7 +559,43 @@ def Game():
 		elif GameType =='TexVenture':
 			#Next line with RETURN
 			if (event.type == pygame.KEYDOWN) and (event.key == pygame.K_RETURN):
-				NextLine()
+				if str(StoryIndex[0]).isdigit():
+					StoryIndex = NextLine(ImageTable, windowSurface, StoryIndex, StoryContent)
+				elif StoryIndex == 'END':
+					GameType = 'MainMenu'
+					render(MMScreen, ImageTable, windowSurface)
+			
+			#ESC to Exit TexVenture
+			if (event.type == pygame.KEYDOWN) and (event.key == pygame.K_ESCAPE):
+				GameType = 'MainMenu'
+				render(MMScreen, ImageTable, windowSurface)
+		
+		#Yes or NO question for TexVenture
+		elif GameType == 'TVClosedQuestion':
+			if (event.type == pygame.KEYDOWN) and (event.key == pygame.K_LEFT):
+				AlterSign(StoryScreen, 4, 1, '²')
+				AlterSign(StoryScreen, 4, 20, ' ')
+				#alter the choosen story index
+				StoryIndex[3] = StoryIndex[1]
+				#render new arrow position
+				render(StoryScreen, ImageTable, windowSurface)
+			if (event.type == pygame.KEYDOWN) and (event.key == pygame.K_RIGHT):
+				AlterSign(StoryScreen, 4, 1, ' ')
+				AlterSign(StoryScreen, 4, 20, '³')
+				#alter the choosen story index
+				StoryIndex[3] = StoryIndex[2]
+				#render new arrow position
+				render(StoryScreen, ImageTable, windowSurface)		
+			if (event.type == pygame.KEYDOWN) and (event.key == pygame.K_RETURN):
+				StoryIndex = [StoryIndex[3], 1]
+				ClearRows()
+				GameType = 'TexVenture'
+				StoryIndex = NextLine(ImageTable, windowSurface, StoryIndex, StoryContent)
+			
+			#ESC to Exit TexVenture
+			if (event.type == pygame.KEYDOWN) and (event.key == pygame.K_ESCAPE):
+				GameType = 'MainMenu'
+				render(MMScreen, ImageTable, windowSurface)
 		
 		#clear screen
 		if (event.type == pygame.KEYDOWN) and (event.key == pygame.K_c):
