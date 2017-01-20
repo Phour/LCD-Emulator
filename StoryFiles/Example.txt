@@ -2,23 +2,33 @@
 [T]"here you have 4 rows"
 [T]"to print the Title  "
 [T]"Screen for the Story"
-
-[H]{tutorial}
+[L]
+[M]{tutorial}
 [R]"In einer Row koennen"
 [R]"bis zu 20 Zeichen   "
 [R]"stehen.             "
 [R]"Das ist das Maximum!"
 [I]"Zeilen mit [I] können beliebig lang sein und werden ignoriert"
+[I]"Sie Dienen als KOmmentare"
+[I]
+[I]WICHTIG!!! Zwischen den " Dürfen nur maximal 20 Stehen
+[I]           Bei Fragen Muss in der Antwort Möglichkeit immer ein Leerzeichen am Anfang und am Ende bleiben
+[I]
+[I]
 [L]
 [R]"[L] Loescht Alles   "
 [R]"[yn]fragt nach Ja   "
 [R]"oder nein           "
 [R]"Verstanden?         "
-[yn]{y:tutorial;n:weiter}
-
-[H]{Weiter}
-[E]"[H] ist wie eine    "
-[E]"Textmarke und kann  "
-[E]"beliebig land sein. "
+[yn]{y:weiter1;n:tutorial}" Klar | WHAAAAT!?!? "
+[I]
+[M]{weiter1}
+[R]"[M] ist wie eine    "
+[R]"Textmarke und kann  "
+[R]"beliebig lang sein. "
 [R]"mit [E] wird Beendet"
-[E]"End of transmission."
+[L]
+[R]"End of transmission."
+[R]"...                 "
+[R]"...                 "
+[E]
